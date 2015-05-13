@@ -153,9 +153,14 @@ class dis_campos_tools(osv.osv):
 	def set_process(self, cr, uid, ids, context=None):
 		res=super(dis_campos_tools, self).set_process(cr, uid, ids, context=context)
 		subscription_obj=self.browse(cr, uid, ids[0], context=context)
-		query="INSERT INTO scktabonado (nomprop, cedfisica) values(%s, %s);" #cedfisica must be unique
-		data=(subscription_obj.name.name, subscription_obj.number)
-		cr.execute(query, data)
+		cr.execute("SELECT cedfisica FROM scktabonado WHERE cedfisica = '"+str(subscription_obj.number)+"'")
+		rows = cr.fetchall()
+		if not rows:
+			query="INSERT INTO scktabonado (nomprop, cedfisica) values(%s, %s);" #cedfisica must be unique
+			data=(subscription_obj.name.name, subscription_obj.number)
+			cr.execute(query, data)
+			subscription_obj.doc_source.write({'subscription_id':subscription_obj.id})
+		print"SUBSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS: "+str(subscription_obj.id)
 		#raise osv.except_osv(('¡Progra!'), ('Info'))
 		return res
 
@@ -260,7 +265,6 @@ class AccountInvoice(osv.osv):
 		rows = cr.fetchall()
 		if rows:
 			codpropietario=rows[0][0]
-		print "ROWSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS: " +str(rows)
 		query="INSERT INTO scktservdecobro (numfactura, codpropietario) values(%s, %s);"
 		data=(invoice_obj.number, codpropietario)
 		cr.execute(query, data)
