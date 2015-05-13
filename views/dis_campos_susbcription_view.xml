@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+        <!--cambio de nombre del campo en ir_cron-->
+         <record model="ir.ui.view" id="campo_tree">
+			<field name="name">ir cron</field>
+			<field name="model">ir.cron</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="base.ir_cron_view"/>
+			<field name="arch" type="xml">
+                <field name="numbercall" position="replace">
+                	<field name="numbercall" string="Número de cuotas" />
+                </field>
+			</field>
+		</record>
+
+        <!--vista de renovar-->
+         <record model="ir.ui.view" id="renew_wizard">
+			<field name="name">renew wizard</field>
+			<field name="model">renew.wizard</field>
+			<field name="arch" type="xml">
+                <form string="Renovación de contrato" version="7.0">
+                    <separator string="Renovación de contrato"/>
+                    <group string="">
+                    <field name="number" required="1" />
+                    <field name="interval_number" required="1" />
+                    <field name="exec_init" required="1" />
+                    <field name="interval_type" required="1" />
+                    <field name="date_init" required="1" />
+                    </group>
+                    <footer>
+                    <button string="Aceptar" name="renew" type="object" class="oe_highlight" context="{'interval_number':interval_number,
+                    'exec_init':exec_init, 'interval_type':interval_type, 'date_init':date_init, 'number':number}"/>
+                    or
+                    <button string="Cancelar" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+		</record>
+
+        <!--acción de renovar-->
+        <record id="action_view_renew_wizard" model="ir.actions.act_window">
+            <field name="name">Renovación</field>
+            <field name="res_model">renew.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="renew_wizard"/>
+            <field name="target">new</field>
+            <field name="context">{'subscription_id': active_id}</field>
+        </record>
+
+        <!--vista de wizard de anular-->
+        <record model="ir.ui.view" id="annulment_wizard">
+			<field name="name">annulment wizard</field>
+			<field name="model">annulment.wizard</field>
+			<field name="arch" type="xml">
+                <form string="Confirmar Anulación de Contrato" version="7.0">
+                    <separator string="Confirmar Anulación de Contrato"/>
+                    <field name="note" required="1" />
+                    <footer>
+                    <button string="Aceptar" name="annular" type="object" class="oe_highlight" context="{'note':note}"/>
+                    or
+                    <button string="Cancelar" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+		</record>
+
+        <!--acción del wizard del anular-->
+        <record id="action_view_annulment_wizard" model="ir.actions.act_window">
+            <field name="name">Anulación</field>
+            <field name="res_model">annulment.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="annulment_wizard"/>
+            <field name="target">new</field>
+            <field name="context">{'subscription_id': active_id}</field>
+        </record>
+
+        <!--formulario de contrato-->
+		<record model="ir.ui.view" id="subscription_form">
+			<field name="name">subscription subscription</field>
+			<field name="model">subscription.subscription</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="subscription.view_subscription_form"/>
+			<field name="arch" type="xml">
+			<header>
+                	<button name="%(action_view_annulment_wizard)d" string="Anular" type="action" class="oe_highlight" attrs="{'invisible':['|',('status_contract','not in','A vencer'), ('state','not in','running')]}"/>
+                	<button name="%(action_view_renew_wizard)d" string="Renovar" type="action"  class="oe_highlight" attrs="{'invisible':['|',('status_contract','not in','A vencer'), ('state','not in','running')]}"/>
+            </header>
+                <field name="name" position="after">
+                	<field name="number" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                </field>
+                <field name="partner_id" position="replace">
+	                <field name="currency" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+	                <field name="means_payment" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+	                <field name="card_type" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+	                <field name="card_number" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+	                <field name="installation_date" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                    <field name="date_payment" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+	                <field name="due_date" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                    <field name="responsible" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                	<field name="description" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                    <field name="quality_equipment" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                    <field name="technical_installer" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                    <field name="account_number" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                    <field name="location_document" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                    <field name="new_subscription_id" attrs="{'readonly':1}"/>
+                    <field name="subscription_id" attrs="{'readonly':1}"/>
+                    <field name="status_contract" invisible="1"/>
+                    <field name="title"  attrs="{'readonly':1}"/>
+                    <field name="status_contract" invisible="1"/>
+                    <field name="TELCOM" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                    <label string=" "/>
+                    <label string=" "/>
+                    <field name="GSM" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                    <label string=" "/>
+                    <label string=" "/>
+                    <field name="GPRS" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                    <label string=" "/>
+                    <label string=" "/>
+                    <field name="TCP/IP" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                    <label string=" "/>
+                    <label string=" "/>
+                </field>
+                 <field name="doc_source"  position="replace">
+                    <field name="doc_source" required="0" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                 </field>
+                <field name="due_date"  position="replace">
+					<field name="due_date" string="Fecha de Vencimiento" on_change="on_change_valida_fecha(due_date)" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+				    </field>
+                 <field name="name" position="replace">
+                     <field name="name" string="Cliente" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                 </field>
+                <field name="user_id" position="replace">
+                     <field name="user_id" string="Usuario" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                 </field>
+                <field name="interval_number" position="replace">
+                     <field name="interval_number" string="Período: Cantidad de tiempo" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                 </field>
+                <field name="exec_init" position="replace">
+                     <field name="exec_init" string="Número de documentos" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                 </field>
+                <field name="interval_type" position="replace">
+                     <field name="interval_type" string="Unidad de intervalo" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                 </field>
+                <field name="date_init" position="replace">
+                     <field name="date_init" string="Primera Fecha" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                 </field>
+                <field name="cron_id" position="replace">
+                     <field name="cron_id" string="Tarea (planificador)" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}"/>
+                 </field>
+                <field name="active" position="after">
+                     <field name="sql_accountid" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}" invisible="1"/>
+                     <field name="sql_acctnum" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}" invisible="1"/>
+                     <field name="sql_name" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}" invisible="1"/>
+                     <field name="sql_state" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False)]}" invisible="1"/>
+                 </field>
+                  <notebook>
+                        <page string="TELCOM"  attrs="{'invisible':[('TELCOM','=',False)]}" >
+                            <group col="4">
+                              <field name="tel_Telcom" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False),('TELCOM','=',False)]}"/>
+                              <field name="operator_telcom" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False),('TELCOM','=',False)]}"/>
+                            </group>
+                            <separator string="Notes"/>
+                            <field name="notes"/>
+                        </page>
+                        <page string="GSM" attrs="{'invisible':[('GSM','=',False)]}">
+                            <group col="4">
+                              <field name="tel_GSM" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False),('GSM','=',False)]}"/>
+                              <field name="operator_GSM" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False),('GSM','=',False)]}"/>
+                                <field name="IMEI_GSM" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False),('GSM','=',False)]}"/>
+                            </group>
+                            <separator string="Notes"/>
+                            <field name="notes"/>
+                        </page>
+                        <page string="GPRS" attrs="{'invisible':[('GPRS','=',False)]}">
+                            <group col="4">
+                              <field name="tel_GPRS" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False),('GPRS','=',False)]}" />
+                              <field name="operator_GPRS" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False),('GPRS','=',False)]}"/>
+                                <field name="IMEI_GPRS" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False),('GPRS','=',False)]}"/>
+                            </group>
+                            <separator string="Notes"/>
+                            <field name="notes"/>
+                        </page>
+                        <page string="TCP/IP" attrs="{'invisible':[('TCP/IP','=',False)]}">
+                            <group col="4">
+                              <field name="tel_TCP/IP" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False),('TCP/IP','=',False)]}"/>
+                              <field name="operator_TCP/IP" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False),('TCP/IP','=',False)]}"/>
+                                <field name="MAC_TCP/IP" attrs="{'readonly':['|', '|',('state','in',['annulled','close']), ('active','=',False),('TCP/IP','=',False)]}"/>
+                            </group>
+                            <separator string="Notes"/>
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+			</field>
+		</record>
+
+
+        <!--filtro-->
+		<record id="view_subscription_filter" model="ir.ui.view">
+            <field name="name">subscription.subscription.filter</field>
+            <field name="model">subscription.subscription</field>
+            <field name="inherit_id" ref="subscription.view_subscription_filter"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="number"/>
+                </field>
+                <filter name="User" position="after">
+                	 <filter string="Gestoras" name="responsible" domain="[]" context="{'group_by':'responsible'}"/>
+                </filter>
+            </field>
+        </record>
+
+
+<!--LOCATION -->
+	<record model="ir.actions.act_window" id="open_view_location_form">
+		<field name="name">Ubicación Contrato</field>
+		<field name="res_model">location.location</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+	</record>
+
+
+<menuitem action="open_view_location_form" id="location" sequence="1" parent="base.menu_lunch_survey_root"/>
+
+<!--form-->
+<record model="ir.ui.view" id="menu_location_form">
+		<field name="name">menu.location_form</field>
+		<field name="model">location.location</field>
+		<field name="type">form</field>
+		<field name="arch" type="xml">
+			<form string="Ubicación" version="7.0">
+				<sheet >
+					<group string="Datos">
+						<field  name="name" position="after"/>
+						<field  name="description" position="before"/>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<record model="ir.ui.view" id="menu_location_tree">
+		<field name="name">menu.location_tree</field>
+		<field name="model">location.location</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+			<tree string="Datos">
+				<field name="name" />
+				<field  name="description"/>
+			</tree>
+		</field>
+	</record>
+
+
+<!--form calidad de equipo -->
+<record model="ir.actions.act_window" id="open_view_quality_equipment_form">
+		<field name="name">Calidad de los equipos</field>
+		<field name="res_model">quality.equipment</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+	</record>
+
+
+<menuitem action="open_view_quality_equipment_form" id="QualiteEquipment" sequence="1" parent="base.menu_lunch_survey_root"/>
+
+
+<record model="ir.ui.view" id="menu_quality_equipment_form">
+		<field name="name">menu.quality_equipment_form</field>
+		<field name="model">quality.equipment</field>
+		<field name="type">form</field>
+		<field name="arch" type="xml">
+			<form string="Calidad de los equipos" version="7.0">
+				<sheet >
+					<group string="Datos">
+						<field  name="name" position="after"/>
+						<field  name="description" position="before"/>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<record model="ir.ui.view" id="menu_quality_equipment_tree">
+		<field name="name">menu.quality_equipment_tree</field>
+		<field name="model">quality.equipment</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+			<tree string="Datos">
+				<field name="name" />
+				<field  name="description"/>
+			</tree>
+		</field>
+	</record>
+
+		<record model="ir.ui.view" id="account_invoice_form_subscription">
+			<field name="name">account invoice</field>
+			<field name="model">account.invoice</field>
+			<field name="type">form</field>
+			<field name="inherit_id" ref="account.invoice_form"/>
+			<field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                	<field name="subscription_id" attrs="{'readonly':[('state','!=','draft')]}"/>
+                </field>
+        </field>
+	</record>-->
+	</data>
+</openerp>
+
