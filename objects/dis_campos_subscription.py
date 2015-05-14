@@ -275,8 +275,8 @@ class AccountInvoice(osv.osv):
 		rubros_list= []
 		montos_list= []
 
-		query="INSERT INTO scktservdetallado (numfactura, monto, fechavenc) values(%s, %s, %s);"
-		data=(invoice_obj.number, invoice_obj.amount_total, self.date_to_long(invoice_obj.date_due))
+		query="INSERT INTO scktservdetallado (numfactura, numero, monto, fechavenc, fechadecobro) values(%s, %s, %s, %s, %s);"
+		data=(invoice_obj.number, invoice_obj.number, invoice_obj.amount_total, self.date_to_long(invoice_obj.date_due), self.date_to_long(invoice_obj.date_invoice))
 		cr.execute(query, data)
 
 		x=0
